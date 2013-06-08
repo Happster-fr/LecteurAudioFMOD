@@ -1,23 +1,24 @@
 /* 
- * File:   audioPlayer.cpp
+ * File:   audioMultiPlayer.cpp
  * Author: user
  * 
- * Created on 8 juin 2013, 19:38
+ * Created on 8 juin 2013, 21:34
  */
 
-#include "audioPlayer.h"
+#include "audioMultiPlayer.h"
 
-audioPlayer::audioPlayer() {
-    channel = 0;
+audioMultiPlayer::audioMultiPlayer() {
+    flagFadIn = false;
+    flagFadOut = false;
 }
 
-audioPlayer::audioPlayer(const audioPlayer& orig) {
-    channel = 0;
+audioMultiPlayer::audioMultiPlayer(const audioMultiPlayer& orig) {
 }
 
-audioPlayer::~audioPlayer() {}
+audioMultiPlayer::~audioMultiPlayer() {
+}
 
-int audioPlayer::playSound(string songPath, string songName, bool withBack) {
+int audioMultiPlayer::playSound(string songPath, string songName, bool firstStart) {
     int key;
 
     /*
@@ -39,30 +40,45 @@ int audioPlayer::playSound(string songPath, string songName, bool withBack) {
     /* PLAY SONG */
     result = system->playSound(FMOD_CHANNEL_FREE, sound1, 0, &channel);
     utilities::ERRCHECK(result);
+    
+    if (!firstStart) {
+        channel->setVolume(0.0f);
+        playPause();
+    }
 
     printf("===================================================================\n");
     printf("Lecteur Audio - %s\n", songName.c_str());
     printf("===================================================================\n");
     printf("\n");
     printf("'Space' -> Play/Pause\n");
-    if (withBack) {
-        printf("'Esc'   -> Retour\n");
-    } else {
-        printf("'Esc'   -> Quitter\n");
-    }
+    printf("'Esc'   -> Quitter\n");
     printf("\n");
 
     do {
-        if (kbhit()) {
-            key = getch();
-            switch (key) {
-                case ' ': {
-                    playPause();
-                    break;
-                }
+        //FADIN
+        if (flagFadIn) {
+            float volume;
+            channel->getVolume(&volume);
+            channel->setVolume(volume + 0.0005f);
+            usleep(1000);
+            if (volume == 1.0f) {
+                flagFadIn = false;
+                alarm(1);
             }
         }
-        system->update();
+
+        //FADOUT
+        if (flagFadOut) {
+            float volume;
+            channel->getVolume(&volume);
+            channel->setVolume(volume - 0.0005f);
+            usleep(1000);
+            if (volume == 0.0f) {
+                flagFadOut = false;
+                playPause();
+                alarm(1);
+            }
+        }
 
         {
             unsigned int ms = 0;
@@ -96,9 +112,6 @@ int audioPlayer::playSound(string songPath, string songName, bool withBack) {
                     }
                 }
             }
-
-            printf("%02d:%02d:%02d/%02d:%02d:%02d - (%s)\r", ms / 1000 / 60, ms / 1000 % 60, ms / 10 % 100, lenms / 1000 / 60, lenms / 1000 % 60, lenms / 10 % 100, paused ? "Pause " : playing ? "Play" : "Stop");
-            fflush(stdout);
         }
     } while (key != 27);
 
@@ -108,7 +121,7 @@ int audioPlayer::playSound(string songPath, string songName, bool withBack) {
     return 0;
 }
 
-int audioPlayer::choixMusique(string folderPath, vector<string> filesName) {
+int audioMultiPlayer::choixMusique(string folderPath, vector<string> filesName) {
     printf("\n");
     printf("'Autre' -> Quitter\n");
     for (int i = 0; i < filesName.size(); i++) {
@@ -136,7 +149,7 @@ int audioPlayer::choixMusique(string folderPath, vector<string> filesName) {
     }
 }
 
-void audioPlayer::release() {
+void audioMultiPlayer::release() {
     result = sound1->release();
     utilities::ERRCHECK(result);
     result = system->close();
@@ -145,8 +158,22 @@ void audioPlayer::release() {
     utilities::ERRCHECK(result);
 }
 
-void audioPlayer::playPause() {
+bool audioMultiPlayer::getPaused() {
+    bool paused;
+    channel->getPaused(&paused);
+    return paused;
+}
+
+void audioMultiPlayer::playPause() {
     bool paused;
     channel->getPaused(&paused);
     channel->setPaused(!paused);
+}
+
+void audioMultiPlayer::fadIn() {
+    flagFadIn = true;
+}
+
+void audioMultiPlayer::fadOut() {
+    flagFadOut = true;
 }

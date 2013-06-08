@@ -1,5 +1,5 @@
-#ifndef AUDIOPLAYER_H
-#define	AUDIOPLAYER_H
+#ifndef AUDIOMULTIPLAYER_H
+#define	AUDIOMULTIPLAYER_H
 
 #include "inc/fmod.hpp"
 #include "inc/fmod_errors.h"
@@ -13,23 +13,28 @@
 
 using namespace std;
 
-class audioPlayer {
+class audioMultiPlayer {
 public:
-    audioPlayer();
-    audioPlayer(const audioPlayer& orig);
-    virtual ~audioPlayer();
-    int playSound(string songPath, string songName, bool withBack = false);
+    audioMultiPlayer();
+    audioMultiPlayer(const audioMultiPlayer& orig);
+    virtual ~audioMultiPlayer();
+    int playSound(string songPath, string songName, bool firstStart);
     int choixMusique(string folderPath, vector<string> filesName);
+    bool getPaused();
     void playPause();
     void release();
-    static void handler(int signum);
+    void fadIn();
+    void fadOut();
 private:
     FMOD::System *system;
     FMOD::Sound *sound1;
     FMOD::Channel *channel;
     FMOD_RESULT result;
+    bool flagFadIn;
+    bool flagFadOut;
 
 };
 
-#endif	/* AUDIOPLAYER_H */
+#endif	/* AUDIOMULTIPLAYER_H */
+
 
