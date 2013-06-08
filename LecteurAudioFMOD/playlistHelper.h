@@ -9,6 +9,7 @@
 #include <vector>
 #include <sstream>
 #include <dirent.h>
+#include <fstream>
 
 #include "utilities.h"
 
@@ -20,12 +21,14 @@ public:
     playlistHelper(const playlistHelper& orig);
     virtual ~playlistHelper();
     int loadPlaylist(string path);
+    int addTrack(string trackName, string playlistPath, string playlistName);
+    int createPlaylist(string playlistName, string playlistPath);
 private:
     void instructions();
     int preparePlaylist();
     int launchPlaylist();
     int initPlaylist();
-    
+        
     string pathName;
     FMOD::System *system;
     FMOD::Sound *playlist;

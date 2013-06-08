@@ -193,7 +193,39 @@ int playlistHelper::loadPlaylist(string path) {
     }
 }
 
-/*---------------------------------------------------------------------------------------------------------------------------------------------------------*/
+int playlistHelper::addTrack(string trackName, string playlistPath, string playlistName) {
+    int resultint = 0;
+    if (utilities::fileExist(playlistPath + trackName)) {
+        ofstream myfile;
+        myfile.open((playlistPath + playlistName).c_str(), std::ios_base::app);
+        if (myfile.is_open()) {
+            myfile << "#EXTINF:1," << trackName << "\n";
+            myfile << trackName << "\n";
+        } else {
+            utilities::errorLogger("Unable to open file");
+            resultint = -1;
+        }
+    } else {
+        utilities::errorLogger("The " + trackName + " isn't in the playlist path : " + playlistPath);
+        resultint = -1;
+    }
+    return resultint;
+}
+
+int playlistHelper::createPlaylist(string playlistName, string playlistPath) {
+    int resultint = 0;
+    if (!utilities::fileExist(playlistPath + playlistName)) {
+        ofstream myfile;
+        myfile.open((playlistPath + playlistName).c_str());
+        myfile << "#EXTM3U\n";
+    } else {
+        utilities::errorLogger("Playlist exists");
+        resultint = -1;
+    }
+    return resultint;
+}
+
+
 
 
 

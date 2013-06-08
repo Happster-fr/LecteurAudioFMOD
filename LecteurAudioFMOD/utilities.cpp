@@ -64,3 +64,43 @@ string utilities::onlyPath(const string &s) {
     return concat;
 }
 
+vector<string> utilities::esplit(const string &s, char delim, vector<string> &elems) {
+    stringstream ss(s);
+    string item;
+    while (getline(ss, item, delim)) {
+        elems.push_back(item);
+    }
+    return elems;
+}
+
+vector<string> utilities::split(const string &s, char delim) {
+    vector<string> elems;
+    esplit(s, delim, elems);
+    return elems;
+}
+
+bool utilities::fileIsAudio(string fileName) {
+    vector<string> fileSplit = split(fileName, '.');
+    if (fileSplit.size() > 1) {
+        if (fileSplit.at(1) == "mp3" || fileSplit.at(1) == "ogg" || fileSplit.at(1) == "wav") {
+            return true;
+        }
+    }
+    return false;
+}
+
+vector<string> utilities::listFilesInFolder(string folder) {
+    DIR *dir;
+    struct dirent *ent;
+    vector<string> filesName;
+    if ((dir = opendir(folder.c_str())) != NULL) {
+        while ((ent = readdir(dir)) != NULL) {
+            string fileName = ent->d_name;
+            if (fileIsAudio(fileName)) {
+                filesName.push_back(fileName);
+            }
+        }
+        closedir(dir);
+    }
+    return filesName;
+}

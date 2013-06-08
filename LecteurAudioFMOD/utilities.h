@@ -30,6 +30,11 @@ public:
     static bool fileExist(string filename);
     static vector<string> split2(const string &s, char delim, vector<string> &elems);
     static string onlyPath(const string &s);
+    
+    static vector<string> esplit(const string &s, char delim, vector<string> &elems);
+    static vector<string> split(const string &s, char delim);
+    static bool fileIsAudio(string fileName);
+    static vector<string> listFilesInFolder(string folder);
 private:
 
 };
