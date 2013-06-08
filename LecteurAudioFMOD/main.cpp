@@ -110,7 +110,7 @@ int playSound(string songPath, string songName, bool withBack = false) {
             fflush(stdout);
         }
     } while (key != 27);
-    
+
     printf("\n");
 
     /*
@@ -198,6 +198,17 @@ int choixMusique(string folderPath, vector<string> filesName) {
 }
 
 int main(int argc, char *argv[]) {
+
+    /* utilisation de la classe playlistHelper
+    playlistHelper* ph;
+    ph = new playlistHelper();
+    
+    ph->loadPlaylist("/home/user/NetBeansProjects/FmodDemo/media/playlist.m3u");
+    delete ph;
+    ph = NULL;
+     */
+
+
     if (argc > 1) {
         string songPath = argv[1];
 
