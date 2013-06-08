@@ -17,10 +17,6 @@ audioPlayer::~audioPlayer() {
 }
 
 int audioPlayer::playSound(string songPath, string songName, bool withBack) {
-    FMOD::System *system;
-    FMOD::Sound *sound1;
-    FMOD::Channel *channel = 0;
-    FMOD_RESULT result;
     int key;
 
     /*
