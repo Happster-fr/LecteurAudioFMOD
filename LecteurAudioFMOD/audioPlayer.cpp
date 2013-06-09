@@ -19,7 +19,6 @@ audioPlayer::~audioPlayer() {}
 
 int audioPlayer::playSound(string songPath, string songName, bool withBack) {
     int key;
-    bool endOfTrack = false;
     /*
         Create a System object and initialize.
      */
