@@ -18,8 +18,7 @@ public:
     audioMultiPlayer();
     audioMultiPlayer(const audioMultiPlayer& orig);
     virtual ~audioMultiPlayer();
-    int playSound(string songPath, string songName, bool firstStart);
-    int choixMusique(string folderPath, vector<string> filesName);
+    int playSound(string songPath, string songName, bool firstStart, pthread_mutex_t* mut);
     bool getPaused();
     void playPause();
     void release();

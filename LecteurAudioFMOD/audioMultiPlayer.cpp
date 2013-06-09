@@ -18,7 +18,7 @@ audioMultiPlayer::audioMultiPlayer(const audioMultiPlayer& orig) {
 audioMultiPlayer::~audioMultiPlayer() {
 }
 
-int audioMultiPlayer::playSound(string songPath, string songName, bool firstStart) {
+int audioMultiPlayer::playSound(string songPath, string songName, bool firstStart, pthread_mutex_t* mut) {
     int key;
 
     /*
@@ -40,19 +40,22 @@ int audioMultiPlayer::playSound(string songPath, string songName, bool firstStar
     /* PLAY SONG */
     result = system->playSound(FMOD_CHANNEL_FREE, sound1, 0, &channel);
     utilities::ERRCHECK(result);
-    
-    if (!firstStart) {
+
+    if (firstStart) {
+        printf("===================================================================\n");
+        printf("Lecteur Audio (Mix)\n");
+        printf("===================================================================\n");
+        printf("1) %s\n", songName.c_str());
+    } else if (!firstStart) {
         channel->setVolume(0.0f);
         playPause();
+        printf("2) %s\n", songName.c_str());
+        printf("===================================================================\n");
+        printf("\n");
+        printf("'Space' -> FadIn/FadOut\n");
+        printf("'Esc'   -> Quitter\n");
+        printf("\n");
     }
-
-    printf("===================================================================\n");
-    printf("Lecteur Audio - %s\n", songName.c_str());
-    printf("===================================================================\n");
-    printf("\n");
-    printf("'Space' -> Play/Pause\n");
-    printf("'Esc'   -> Quitter\n");
-    printf("\n");
 
     do {
         //FADIN
@@ -63,7 +66,13 @@ int audioMultiPlayer::playSound(string songPath, string songName, bool firstStar
             usleep(1000);
             if (volume == 1.0f) {
                 flagFadIn = false;
-                alarm(1);
+                pthread_mutex_unlock(mut);
+                if (firstStart) {
+                    printf("FadIn finish for first song (mutex unlock)\n");
+                } else {
+                    printf("FadIn finish for second song (mutex unlock)\n");
+                }
+                fflush(stdout);
             }
         }
 
@@ -77,6 +86,12 @@ int audioMultiPlayer::playSound(string songPath, string songName, bool firstStar
                 flagFadOut = false;
                 playPause();
                 alarm(1);
+                if (firstStart) {
+                    printf("FadOut finish for first song\n");
+                } else {
+                    printf("FadOut finish for second song\n");
+                }
+                fflush(stdout);
             }
         }
 
@@ -119,34 +134,6 @@ int audioMultiPlayer::playSound(string songPath, string songName, bool firstStar
 
     release();
     return 0;
-}
-
-int audioMultiPlayer::choixMusique(string folderPath, vector<string> filesName) {
-    printf("\n");
-    printf("'Autre' -> Quitter\n");
-    for (int i = 0; i < filesName.size(); i++) {
-        printf("'%d' -> %s\n", i + 1, filesName.at(i).c_str());
-    }
-    printf("\n");
-
-    int indexSong;
-    printf("Position : ");
-    cin >> indexSong;
-
-    printf("\n");
-    if (indexSong > 0 && indexSong <= filesName.size()) {
-        indexSong--;
-        string songPath = folderPath + "/" + filesName.at(indexSong);
-        playSound(songPath, filesName.at(indexSong), true);
-        printf("===================================================================\n");
-        printf("Choissisez votre musique.\n");
-        printf("===================================================================\n");
-        choixMusique(folderPath, filesName);
-    } else if (indexSong > 0) {
-        printf("Choix incorrecte, veuillez recommencer!!");
-        printf("\n");
-        choixMusique(folderPath, filesName);
-    }
 }
 
 void audioMultiPlayer::release() {
