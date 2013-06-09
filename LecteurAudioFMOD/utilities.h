@@ -35,7 +35,6 @@ public:
     static vector<string> split(const string &s, char delim);
     static bool fileIsAudio(string fileName);
     static vector<string> listFilesInFolder(string folder);
-    static bool fileIsPlaylist(string fileName);
 private:
 
 };

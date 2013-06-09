@@ -89,16 +89,6 @@ bool utilities::fileIsAudio(string fileName) {
     return false;
 }
 
-bool utilities::fileIsPlaylist(string fileName) {
-    vector<string> fileSplit = split(fileName, '.');
-    if (fileSplit.size() > 1) {
-        if (fileSplit.at(1) == "m3u") {
-            return true;
-        }
-    }
-    return false;
-}
-
 vector<string> utilities::listFilesInFolder(string folder) {
     DIR *dir;
     struct dirent *ent;

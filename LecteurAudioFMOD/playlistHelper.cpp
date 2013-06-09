@@ -68,6 +68,8 @@ int playlistHelper::initPlaylist() {
         title = (char *) tag.data;
 
         trackNumber++;
+    } else {
+        //simple sound...
     }
 
     printf("\n");
