@@ -85,7 +85,7 @@ int audioMultiPlayer::playSound(string songPath, string songName, bool firstStar
             if (volume == 0.0f) {
                 flagFadOut = false;
                 playPause();
-                alarm(1);
+                ualarm(1,0);
                 if (firstStart) {
                     printf("FadOut finish for first song\n");
                 } else {

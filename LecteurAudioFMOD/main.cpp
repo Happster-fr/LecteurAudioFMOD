@@ -82,8 +82,70 @@ void handler(int signum) {
     }
 }
 
+int playWithThread(string songPath, string fileName, audioPlayer* ap) {
+    SongStruct* songStruct = new SongStruct();
+    songStruct->songPath = songPath;
+    songStruct->songName = fileName;
+    songStruct->withBack = false;
+    songStruct->ap = ap;
+
+    pthread_t thread_id;
+    pthread_create(&thread_id, NULL, playSongThread, songStruct);
+
+    int key;
+    do {
+        if (kbhit()) {
+            key = getch();
+            switch (key) {
+                case ' ':
+                {
+                    ap->playPause();
+                    break;
+                }
+            }
+        }
+    } while (key != 27);
+    return 0;
+}
+
+int managePlaylist(string songPath) {
+    playlistHelper* ph = new playlistHelper();
+    if (utilities::fileExist(songPath)) {
+        ph->loadPlaylist(songPath);
+    } else {
+        string path, playlistName, trackName;
+        printf("===================================================================\n");
+        printf("Welcome to Playlist creator\n");
+        printf("===================================================================\n");
+        printf("Please enter the path of the playlist (music files need to be on same folder):\n");
+        cin >> path;
+        printf("Please enter the name of the playlist:\n");
+        cin >> playlistName;
+
+        ph->createPlaylist(playlistName, path);
+        printf("What is the first track?\n");
+        cin >> trackName;
+        ph->addTrack(trackName, path, playlistName);
+
+        bool playlist = true;
+        while (playlist) {
+            printf("What is the next track?\n");
+            cin >> trackName;
+            ph->addTrack(trackName, path, playlistName);
+            printf("Another track (Y/n)?\n");
+            cin >> trackName;
+            if (trackName == "n") {
+                playlist = false;
+            }
+        }
+        printf("\nEnjoy the new playlist!\n");
+        ph->loadPlaylist(path + playlistName);
+        delete ph;
+        ph = NULL;
+    }
+}
+
 int main(int argc, char *argv[]) {
-    signal(SIGINT, handler);
     if (argc == 2) {
         audioPlayer* ap = new audioPlayer();
         string songPath = argv[1];
@@ -92,31 +154,11 @@ int main(int argc, char *argv[]) {
         fileSplit = utilities::split(fileName, '.');
         if (fileSplit.size() > 1) {
             if (utilities::fileIsAudio(fileName)) {
-                SongStruct* songStruct = new SongStruct();
-                songStruct->songPath = songPath;
-                songStruct->songName = fileName;
-                songStruct->withBack = false;
-                songStruct->ap = ap;
-
-                pthread_t thread_id;
-                pthread_create(&thread_id, NULL, playSongThread, songStruct);
-
-                int key;
-                do {
-                    if (kbhit()) {
-                        key = getch();
-                        switch (key) {
-                            case ' ':
-                            {
-                                ap->playPause();
-                                break;
-                            }
-                        }
-                    }
-                } while (key != 27);
-                return 0;
+                playWithThread(songPath, fileName, ap);
+            } else if (utilities::fileIsPlaylist(fileName)) {
+                managePlaylist(songPath);
             } else {
-                utilities::errorLogger("Désolé mais le fichier n'est pas un audio!!\n");
+                utilities::errorLogger("Désolé mais le type de fichier n'est pas pris en charge...\n");
             }
         } else {
             vector<string> filesName = utilities::listFilesInFolder(songPath);
@@ -176,13 +218,12 @@ int main(int argc, char *argv[]) {
                         {
                             pthread_mutex_lock(&mut);
                             cout << "Space pressed (mutex lock)" << endl;
-                            alarm(1);
+                            ualarm(1,0);
                             break;
                         }
                     }
                 }
             } while (key != 27);
-
             pthread_mutex_destroy(&mut);
         }
 

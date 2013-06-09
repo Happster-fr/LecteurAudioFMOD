@@ -19,7 +19,7 @@ audioPlayer::~audioPlayer() {}
 
 int audioPlayer::playSound(string songPath, string songName, bool withBack) {
     int key;
-
+    bool endOfTrack = false;
     /*
         Create a System object and initialize.
      */
@@ -99,11 +99,11 @@ int audioPlayer::playSound(string songPath, string songName, bool withBack) {
 
             printf("%02d:%02d:%02d/%02d:%02d:%02d - (%s)\r", ms / 1000 / 60, ms / 1000 % 60, ms / 10 % 100, lenms / 1000 / 60, lenms / 1000 % 60, lenms / 10 % 100, paused ? "Pause " : playing ? "Play" : "Stop");
             fflush(stdout);
+            
         }
     } while (key != 27);
 
     printf("\n");
-
     release();
     return 0;
 }
