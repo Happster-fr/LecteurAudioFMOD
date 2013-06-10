@@ -20,8 +20,26 @@ public:
     playlistHelper();
     playlistHelper(const playlistHelper& orig);
     virtual ~playlistHelper();
+    /**
+     * Run a play list (file .m3u)
+     * @param path : the path of the play list
+     * @return int : return 0 if alreasing is ok
+     */
     int loadPlaylist(string path);
+    /**
+     * Add trackName in play list file in playListPath and playListName specified
+     * @param trackName
+     * @param playlistPath
+     * @param playlistName
+     * @return int : return 0 if alreasing is ok
+     */
     int addTrack(string trackName, string playlistPath, string playlistName);
+    /**
+     * Create a play list file in playListPath specified with playListName
+     * @param playlistName
+     * @param playlistPath
+     * @return int : return 0 if alreasing is ok
+     */
     int createPlaylist(string playlistName, string playlistPath);
 private:
     void instructions();
