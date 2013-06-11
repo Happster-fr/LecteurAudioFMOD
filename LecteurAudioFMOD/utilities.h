@@ -47,7 +47,7 @@ public:
      */
     static bool fileExist(string filename);
     /**
-     * Cutting a string with separator and result in string vector var and return result
+     * Cutting a string with separator, put result in string vector and return result
      * @param s
      * @param delim
      * @param elems
@@ -61,7 +61,7 @@ public:
      */
     static string onlyPath(const string &s);
     /**
-     * Cutting a string with separator and result in string vector var and return result
+     * Cutting a string with separator, put result in string vector and return result
      * @param s
      * @param delim
      * @param elems
@@ -69,14 +69,14 @@ public:
      */
     static vector<string> esplit(const string &s, char delim, vector<string> &elems);
     /**
-     * Cutting astring with separator and return result in string vector
+     * Cutting a string with separator and return result in string vector
      * @param s
      * @param delim
      * @return vector<string>
      */
     static vector<string> split(const string &s, char delim);
     /**
-     * Retrun true if file have a .mp3, .ogg or .wav extension
+     * Retrun true if file is a .mp3, .ogg or .wav.
      * @param fileName
      * @return bool
      */

@@ -24,7 +24,7 @@ public:
      * @param songName : displayed in the console this audio name
      * @param firstStart : si true play the audio else pause and put the volume down
      * @param mut : can unlock mutex to unlock the main thread
-     * @return int : return 0 if alreasing is ok
+     * @return int : return 0 if everything is ok
      */
     int playSound(string songPath, string songName, bool firstStart, pthread_mutex_t* mut);
     /**
