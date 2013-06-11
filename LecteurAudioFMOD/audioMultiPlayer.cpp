@@ -37,9 +37,7 @@ int audioMultiPlayer::playSound(string songPath, string songName, bool firstStar
     result = system->createSound(songPath.c_str(), FMOD_SOFTWARE, 0, &sound1);
     utilities::ERRCHECK(result);
 
-    /* PLAY SONG */
-    result = system->playSound(FMOD_CHANNEL_FREE, sound1, 0, &channel);
-    utilities::ERRCHECK(result);
+    
 
     if (firstStart) {
         printf("===================================================================\n");
@@ -47,8 +45,7 @@ int audioMultiPlayer::playSound(string songPath, string songName, bool firstStar
         printf("===================================================================\n");
         printf("1) %s\n", songName.c_str());
     } else if (!firstStart) {
-        channel->setVolume(0.0f);
-        playPause();
+		sleep(1);
         printf("2) %s\n", songName.c_str());
         printf("===================================================================\n");
         printf("\n");
@@ -56,6 +53,15 @@ int audioMultiPlayer::playSound(string songPath, string songName, bool firstStar
         printf("'Esc'   -> Quitter\n");
         printf("\n");
     }
+	
+	/* PLAY SONG */
+    result = system->playSound(FMOD_CHANNEL_FREE, sound1, 0, &channel);
+    utilities::ERRCHECK(result);
+	
+	if(!firstStart) {
+		channel->setVolume(0.0f);
+        playPause();
+	}
 
     do {
         //FADIN
